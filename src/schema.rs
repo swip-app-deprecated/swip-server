@@ -1,7 +1,7 @@
 table! {
-    todos (id) {
+    users (id) {
         id -> Integer,
-        title -> Varchar,
-        completed -> Bool,
+        username -> Varchar,
+        password -> Varchar
     }
 }
