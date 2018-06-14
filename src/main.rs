@@ -51,14 +51,12 @@ fn index(name: Path<String>, state: State<AppState>) -> FutureResponse<HttpRespo
 }
 
 fn main() {
-    // ::std::env::set_var("RUST_LOG", "actix_web=info");
+    ::std::env::set_var("RUST_LOG", "actix_web=info");
     env_logger::init();
     dotenv::dotenv().ok();
     let sys = actix::System::new("swipe-server");
+    let capacity = (num_cpus::get()) as usize;
 
-    let capacity = (num_cpus::get() * 4) as usize;
-
-    //let server_port = std::env::var("SERVER_ADDR").expect("SERVER_ADDR must be set");
     server::new(move || {
         App::with_state(
             AppState{
@@ -75,6 +73,6 @@ fn main() {
         .shutdown_timeout(2)
         .start();
 
-    println!("Started http server: {}", "localhost:8000");
+    println!("Started http server: localhost:8000");
     let _ = sys.run();
 }
