@@ -13,9 +13,7 @@ pub fn get_db_connection_pool() -> DBPool {
     dotenv::dotenv().ok();
     let database_url = std::env::var("DATABASE_URL").expect("Did not find DATABASE_URL in config");
     let manager = ConnectionManager::<MysqlConnection>::new(database_url);
-    r2d2::Pool::builder()
-        .build(manager)
-        .expect("failed to create r2d2 pool")
+    r2d2::Pool::builder().build(manager).expect("Pool connection error")
 }
 
 pub fn get_db_address(capacity: usize) -> actix::Addr<Syn, DbExecutor> {

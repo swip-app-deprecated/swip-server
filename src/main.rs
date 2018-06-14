@@ -55,7 +55,7 @@ fn main() {
     env_logger::init();
     dotenv::dotenv().ok();
     let sys = actix::System::new("swipe-server");
-    let capacity = (num_cpus::get()) as usize;
+    let capacity = (num_cpus::get() / 2) as usize;
 
     server::new(move || {
         App::with_state(
