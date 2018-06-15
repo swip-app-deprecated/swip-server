@@ -6,6 +6,8 @@ authors = ["Cédric Legendre <cedric.legendre@epitech.eu>"]
 [dependencies]
 juniper = { version = "0.9.2" }
 
+colored = "1.6"
+
 env_logger = "0.5"
 actix = "0.5"
 actix-web = "^0.6"

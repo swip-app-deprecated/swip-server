@@ -16,38 +16,28 @@ extern crate serde;
 extern crate serde_derive;
 extern crate serde_json;
 extern crate uuid;
+extern crate colored;
 
 use actix::prelude::*;
-use actix_web::{http, middleware, server, App, AsyncResponder, FutureResponse, HttpResponse, Path,
-                State};
-
-use futures::future::Future;
+use actix_web::{http, middleware, server, App, HttpResponse, HttpRequest};
 
 mod database;
 mod graphql;
 
-use database::connection::{get_db_connection_pool, CreateUser, DBPool, DbExecutor};
+use database::connection::{get_db_connection_pool, DBPool, DbExecutor};
 use graphql::executor::GraphQLExecutor;
 
+use colored::*;
+
+#[allow(dead_code)]
 pub struct AppState {
     db: Addr<Syn, DbExecutor>,
     executor: Addr<Syn, GraphQLExecutor>,
 }
 
 /// Async request handler
-fn index(name: Path<String>, state: State<AppState>) -> FutureResponse<HttpResponse> {
-    // send async `CreateUser` message to a `DbExecutor`
-    state
-        .db
-        .send(CreateUser {
-            name: name.into_inner(),
-        })
-        .from_err()
-        .and_then(|res| match res {
-            Ok(user) => Ok(HttpResponse::Ok().json(user)),
-            Err(_) => Ok(HttpResponse::InternalServerError().into()),
-        })
-        .responder()
+fn index(_req: HttpRequest<AppState>) -> HttpResponse {
+    HttpResponse::Ok().json("Swipe app graphql api")
 }
 
 fn main() {
@@ -64,15 +54,16 @@ fn main() {
                 executor: graphql::executor::create_executor(capacity, get_db_connection_pool())
         })
         // enable logger
-        .middleware(middleware::Logger::default())
-            .resource("/graphql", |r| r.method(http::Method::POST).h(graphql::executor::graphql))
-            .resource("/graphiql", |r| r.method(http::Method::GET).h(graphql::executor::graphiql))
-            .resource("/get/{name}", |r| r.method(http::Method::GET).with2(index))
+        .middleware(middleware::Logger::new("\nRemote '%{User-Agent}i' (ip: %a) request %b bytes in %D ms"))
+        .resource("/graphql", |r| r.method(http::Method::POST).h(graphql::executor::graphql))
+        .resource("/graphiql", |r| r.method(http::Method::GET).h(graphql::executor::graphiql))
+        .resource("/", |r| r.method(http::Method::GET).with(index))
     }).bind("localhost:8000")
         .expect("Unable to bind to port")
         .shutdown_timeout(2)
         .start();
 
-    println!("Started http server: localhost:8000");
+    println!("\n {} {}\n", " ".blink().green(), "Started http server: localhost:8000".bold().yellow());
     let _ = sys.run();
+    println!("\n {} {}\n", "".blink().red(), "Server stopped".bold().yellow())
 }
