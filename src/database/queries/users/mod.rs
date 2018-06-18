@@ -2,14 +2,17 @@ use uuid::Uuid;
 use diesel;
 use diesel::prelude::*;
 use diesel::mysql::MysqlConnection;
-use super::models::*;
 use chrono::NaiveDateTime;
+use database::models_init::*;
+use database::models::users::*;
 
+// Generate uuid v4 for user
 fn generate_uuid() -> String {
     let uuid: String = format!("{}", Uuid::new_v4());
     uuid
 }
 
+// Create user in database
 pub fn db_create_user(conn: &MysqlConnection, new_user: &NewUser) -> Result<User, String> {
     use database::schema::users::dsl;
 
@@ -29,6 +32,7 @@ pub fn db_create_user(conn: &MysqlConnection, new_user: &NewUser) -> Result<User
     db_find_user_by_uuid(&conn, &uuid)
 }
 
+// Update user in database
 pub fn db_update_user(conn: &MysqlConnection, uuid: &str, user: &NewUser) -> Result<User, String> {
     use database::schema::users::dsl;
     let res = dsl::users.filter(dsl::uuid.eq(&uuid));
@@ -38,6 +42,7 @@ pub fn db_update_user(conn: &MysqlConnection, uuid: &str, user: &NewUser) -> Res
     }
 }
 
+// Find user by a uuid v4
 pub fn db_find_user_by_uuid(conn: &MysqlConnection, uuid: &str) -> Result<User, String> {
     use database::schema::users::dsl;
 
@@ -52,6 +57,7 @@ pub fn db_find_user_by_uuid(conn: &MysqlConnection, uuid: &str) -> Result<User, 
     }
 }
 
+// Find user by users query filter
 pub fn db_find_users(
     conn: &MysqlConnection,
     filter: &UsersFilterParams,

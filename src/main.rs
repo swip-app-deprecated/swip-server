@@ -21,25 +21,27 @@ extern crate colored;
 use actix::prelude::*;
 use actix_web::{http, middleware, server, App, HttpResponse, HttpRequest};
 
+use colored::*;
+
 mod database;
 mod graphql;
 
 use database::connection::{get_db_connection_pool, DBPool, DbExecutor};
 use graphql::executor::GraphQLExecutor;
 
-use colored::*;
-
+// App state for r2d2 pool and graphql executor
 #[allow(dead_code)]
 pub struct AppState {
     db: Addr<Syn, DbExecutor>,
     executor: Addr<Syn, GraphQLExecutor>,
 }
 
-/// Async request handler
+/// Simple API index
 fn index(_req: HttpRequest<AppState>) -> HttpResponse {
     HttpResponse::Ok().json("Swipe app graphql api")
 }
 
+// Main: activate logs, setup 3 routes and run
 fn main() {
     ::std::env::set_var("RUST_LOG", "actix_web=info");
     env_logger::init();
@@ -53,7 +55,6 @@ fn main() {
                 db: database::connection::get_db_address(capacity),
                 executor: graphql::executor::create_executor(capacity, get_db_connection_pool())
         })
-        // enable logger
         .middleware(middleware::Logger::new("\nRemote '%{User-Agent}i' (ip: %a) request %b bytes in %D ms"))
         .resource("/graphql", |r| r.method(http::Method::POST).h(graphql::executor::graphql))
         .resource("/graphiql", |r| r.method(http::Method::GET).h(graphql::executor::graphiql))

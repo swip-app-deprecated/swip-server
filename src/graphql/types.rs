@@ -1,20 +1,16 @@
 use juniper::FieldResult;
 use juniper::RootNode;
 
-use database::models::*;
+use database::models_init::*;
+use database::models::users::*;
+use database::queries::users::*;
+
 use graphql::executor::GraphQLExecutor;
-use database::queries::*;
+use graphql::schema::users::*;
 
-#[derive(GraphQLObject)]
-#[graphql(description = "Connection")]
-pub struct UserConnection {
-    #[graphql(description = "This contains the User results")]
-    pub edges: Vec<User>,
-    #[graphql(name = "pageInfo")]
-    pub page_info: PageInfo,
-    pub cursor: Option<String>,
-}
 
+
+// Query that does not change things in the db
 pub struct QueryRoot;
 
 graphql_object!(QueryRoot: GraphQLExecutor |&self| {
@@ -48,6 +44,7 @@ graphql_object!(QueryRoot: GraphQLExecutor |&self| {
     }
 });
 
+// Query that does change things in the db
 pub struct MutationRoot;
 
 graphql_object!(MutationRoot: GraphQLExecutor |&self| {
@@ -61,8 +58,10 @@ graphql_object!(MutationRoot: GraphQLExecutor |&self| {
     }
 });
 
+// Create type Schema with Query and Mutation structs
 pub type Schema = RootNode<'static, QueryRoot, MutationRoot>;
 
+// Create schema for graphql executor
 pub fn create_schema() -> Schema {
     Schema::new(QueryRoot {}, MutationRoot {})
 }

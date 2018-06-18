@@ -1,32 +1,34 @@
 use actix::prelude::*;
 use futures::future::Future;
 use serde_json;
-
 use juniper::http::graphiql::graphiql_source;
 use juniper::http::GraphQLRequest;
-
 use std;
-use ::{AppState, DBPool};
-
 use actix_web::{http, AsyncResponder, Error, HttpMessage, HttpRequest, HttpResponse};
-use graphql::schema::{create_schema, Schema};
+
+use ::{AppState, DBPool};
+use graphql::types::{create_schema, Schema};
 
 #[derive(Serialize, Deserialize)]
 pub struct GraphQLData(GraphQLRequest);
 
+// Setup graphql result type
 impl Message for GraphQLData {
     type Result = Result<String, Error>;
 }
 
+// Setup graphql executor with db pool and schema
 pub struct GraphQLExecutor {
     pub schema: std::sync::Arc<Schema>,
     pub db_pool: DBPool,
 }
 
+// Setup Context for executor
 impl Actor for GraphQLExecutor {
     type Context = SyncContext<Self>;
 }
 
+// Setup graphql query handler
 impl Handler<GraphQLData> for GraphQLExecutor {
     type Result = Result<String, Error>;
 
@@ -37,6 +39,7 @@ impl Handler<GraphQLData> for GraphQLExecutor {
     }
 }
 
+// Graphiql route
 pub fn graphiql(_req: HttpRequest<AppState>) -> Result<HttpResponse, Error> {
     let html = graphiql_source("/graphql");
     Ok(HttpResponse::Ok()
@@ -44,6 +47,7 @@ pub fn graphiql(_req: HttpRequest<AppState>) -> Result<HttpResponse, Error> {
         .body(html))
 }
 
+// Graphql endpoints route
 pub fn graphql(req: HttpRequest<AppState>) -> Box<Future<Item = HttpResponse, Error = Error>> {
     let executor = req.state().executor.clone();
     req.json()

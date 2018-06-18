@@ -1,12 +1,11 @@
-use database::schema::users;
-use chrono;
-
+// Database query result
 pub struct DBQueryResult<T> {
     pub items: Vec<T>,
     pub cursor: Option<String>,
     pub has_more: bool,
 }
 
+// Graphql pagination PageInfo (https://graphql.org/learn/pagination/)
 #[derive(GraphQLObject)]
 #[graphql(description = "Page info")]
 pub struct PageInfo {
@@ -20,12 +19,14 @@ pub struct PageInfo {
 
 const DEFAULT_PAGE_SIZE: i32 = 20;
 
+// Pagination parameters struct
 #[derive(GraphQLInputObject)]
 pub struct PagingParams {
     pub limit: Option<i32>,
     pub cursor: Option<String>,
 }
 
+// Pagination parameters impl
 impl PagingParams {
     pub fn get_limit(&self) -> i32 {
         match self.limit {
@@ -42,6 +43,7 @@ impl PagingParams {
     }
 }
 
+// Default parameters for pagination
 impl Default for PagingParams {
     fn default() -> Self {
         PagingParams {
@@ -49,50 +51,4 @@ impl Default for PagingParams {
             cursor: None,
         }
     }
-}
-
-#[derive(GraphQLInputObject)]
-pub struct UsersFilterParams {
-    pub uuid: Option<String>,
-    pub name: Option<String>,
-    pub active: Option<bool>,
-}
-
-impl Default for UsersFilterParams {
-    fn default() -> Self {
-        UsersFilterParams {
-            uuid: None,
-            name: None,
-            active: None,
-        }
-    }
-}
-
-#[derive(GraphQLObject)]
-#[graphql(description = "A humanoid creature")]
-#[derive(Serialize, Queryable)]
-pub struct User {
-    pub id: i32,
-    pub uuid: String,
-    pub name: String,
-    pub active: bool,
-    pub created_at: chrono::NaiveDateTime,
-    pub updated_at: chrono::NaiveDateTime,
-}
-
-#[derive(Deserialize, Insertable)]
-#[table_name = "users"]
-pub struct DbNewUser<'a> {
-    pub uuid: &'a str,
-    pub name: &'a str,
-    pub active: bool,
-}
-
-#[derive(AsChangeset)]
-#[table_name = "users"]
-#[derive(GraphQLInputObject)]
-#[graphql(description = "A humanoid creature")]
-pub struct NewUser {
-    pub name: String,
-    pub active: bool,
 }
