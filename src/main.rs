@@ -3,14 +3,12 @@ extern crate actix_web;
 extern crate chrono;
 #[macro_use]
 extern crate diesel;
-extern crate r2d2_diesel;
 extern crate dotenv;
 extern crate env_logger;
 extern crate futures;
 #[macro_use]
 extern crate juniper;
 extern crate num_cpus;
-extern crate r2d2;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;

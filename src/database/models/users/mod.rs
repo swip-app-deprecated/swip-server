@@ -46,7 +46,7 @@ pub struct DbNewUser<'a> {
 #[derive(AsChangeset)]
 #[table_name = "users"]
 #[derive(GraphQLInputObject)]
-#[graphql(description = "A simple user)]
+#[graphql(description = "A simple user")]
 pub struct NewUser {
     pub name: String,
     pub active: bool,
