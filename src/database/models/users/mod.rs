@@ -1,5 +1,5 @@
-use database::schema::users;
 use chrono;
+use database::schema::users;
 
 // Graphql query filter parameters for user
 #[derive(GraphQLInputObject)]

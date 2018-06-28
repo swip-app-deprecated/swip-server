@@ -1,14 +1,12 @@
 use juniper::FieldResult;
 use juniper::RootNode;
 
-use database::models_init::*;
 use database::models::users::*;
+use database::models_init::*;
 use database::queries::users::*;
 
 use graphql::executor::GraphQLExecutor;
 use graphql::schema::users::*;
-
-
 
 // Query that does not change things in the db
 pub struct QueryRoot;
