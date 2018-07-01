@@ -1,5 +1,5 @@
-use database::models_init::*;
 use database::models::users::*;
+use database::models_init::*;
 
 #[derive(GraphQLObject)]
 #[graphql(description = "Connection")]
