@@ -1,5 +1,5 @@
-use database::schema::users;
 use chrono;
+use database::schema::users;
 
 // Graphql query filter parameters for user
 #[derive(GraphQLInputObject)]
@@ -46,7 +46,7 @@ pub struct DbNewUser<'a> {
 #[derive(AsChangeset)]
 #[table_name = "users"]
 #[derive(GraphQLInputObject)]
-#[graphql(description = "A humanoid creature")]
+#[graphql(description = "A simple user")]
 pub struct NewUser {
     pub name: String,
     pub active: bool,
