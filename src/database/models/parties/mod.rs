@@ -1,14 +1,14 @@
 use database::schema::parties;
 use chrono;
 
-// Graphql query filter parameters for user
+// Graphql query filter parameters for party
 #[derive(GraphQLInputObject)]
 pub struct PartiesFilterParams {
     pub uuid: Option<String>,
     pub title: Option<String>,
 }
 
-// Default filter parameters for user
+// Default filter parameters for party
 impl Default for PartiesFilterParams {
     fn default() -> Self {
         PartiesFilterParams {
@@ -20,7 +20,7 @@ impl Default for PartiesFilterParams {
 
 // Party struct
 #[derive(GraphQLObject)]
-#[graphql(description = "A simple user")]
+#[graphql(description = "A party")]
 #[derive(Serialize, Queryable)]
 pub struct Party {
     pub id: i32,
@@ -30,7 +30,7 @@ pub struct Party {
     pub updated_at: chrono::NaiveDateTime,
 }
 
-// New user in database
+// New party in database
 #[derive(Deserialize, Insertable)]
 #[table_name = "parties"]
 pub struct DbNewParty<'a> {
@@ -38,11 +38,11 @@ pub struct DbNewParty<'a> {
     pub title: &'a str,
 }
 
-// New user
+// New party
 #[derive(AsChangeset)]
 #[table_name = "parties"]
 #[derive(GraphQLInputObject)]
-#[graphql(description = "A humanoid creature")]
+#[graphql(description = "A party")]
 pub struct NewParty {
     pub title: String
 }

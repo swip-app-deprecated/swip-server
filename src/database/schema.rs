@@ -5,7 +5,6 @@ table! {
         title -> Varchar,
         created_at -> Timestamp,
         updated_at -> Timestamp,
-        data -> Timestamp,
     }
 }
 
