@@ -1,13 +1,13 @@
 use actix::prelude::*;
+use actix_web::{http, AsyncResponder, Error, HttpMessage, HttpRequest, HttpResponse};
 use futures::future::Future;
-use serde_json;
 use juniper::http::graphiql::graphiql_source;
 use juniper::http::GraphQLRequest;
+use serde_json;
 use std;
-use actix_web::{http, AsyncResponder, Error, HttpMessage, HttpRequest, HttpResponse};
 
-use ::{AppState, DBPool};
 use graphql::types::{create_schema, Schema};
+use {AppState, DBPool};
 
 #[derive(Serialize, Deserialize)]
 pub struct GraphQLData(GraphQLRequest);
