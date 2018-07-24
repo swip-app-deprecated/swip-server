@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  db:
+#    volumes:
+#      - dbVolume:/var/run/mysqld/mysqld.sock
+    environment:
+      MYSQL_DATABASE: swipedb
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+    image: mariadb:latest
+    ports:
+      - "3306:3306"
+  web:
+#    volumes:
+#      - dbVolume:/var/run/mysqld/mysqld.sock
+    restart: on-failure
+    depends_on:
+      - db
+    build: .
+    environment:
+      DATABASE_URL: mysql://root:12345@db/swipedb
+    ports:
+      - "8000:8000"
+
+#volumes:
+#  dbVolume: {}
